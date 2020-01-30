@@ -25,17 +25,8 @@ public class SystemUserServiceImpl implements SystemUserService {
     }
 
     @Override
-    public SystemUser saveQueryService(String name, String password) {
-        return save(new SystemUser(name, password, SystemUserRole.QUERY_SERVICE));
+    public SystemUser saveSystemUser(String name, String password, SystemUserRole systemUserRole) {
+        return save(new SystemUser(name, password, systemUserRole));
     }
 
-    @Override
-    public SystemUser saveUser(String name, String password) {
-        return save(new SystemUser(name, password, SystemUserRole.USER));
-    }
-
-    @Override
-    public SystemUser saveProcessService(String name, String password) {
-        return save(new SystemUser(name, password, SystemUserRole.PROCESS_SERVICE));
-    }
 }
