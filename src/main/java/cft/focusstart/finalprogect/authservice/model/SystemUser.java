@@ -13,14 +13,18 @@ public class SystemUser {
     public static final int NAME_MAX_LEN = 100;
     public static final int NAME_MIN_LEN = 4;
 
+    public static final int LOGIN_MAX_LEN = 100;
+    public static final int LOGIN_MIN_LEN = 4;
+
     public static final int PASSWORD_MAX_LEN = 100;
     public static final int PASSWORD_MIN_LEN = 8;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(name = "login", length = LOGIN_MAX_LEN, nullable = false, unique = true)
+    @Size(min = LOGIN_MIN_LEN, max = LOGIN_MAX_LEN)
+    private String login;
 
-    @Column(name = "name", length = NAME_MAX_LEN, nullable = false, unique = true)
+    @Column(name = "name", length = NAME_MAX_LEN, nullable = false)
     @Size(min = NAME_MIN_LEN, max = NAME_MAX_LEN)
     private String name;
 
@@ -32,18 +36,19 @@ public class SystemUser {
     @Enumerated(EnumType.STRING)
     private SystemUserRole role;
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
+    //@Column(name = "is_active", nullable = false)
+    //private Boolean isActive;
 
     protected SystemUser()
     {}
 
-    public SystemUser(String userName, String password, SystemUserRole role)
+    public SystemUser(String name, String login, String password, SystemUserRole role)
     {
-        this.name = userName;
+        this.name = name;
+        this.login = login;
         this.password = password;
         this.role = role;
-        isActive = true;
+        //isActive = true;
     }
 
 }

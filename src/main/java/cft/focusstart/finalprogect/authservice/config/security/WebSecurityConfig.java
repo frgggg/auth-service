@@ -21,9 +21,13 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    @Qualifier("authSource")
+
     private DataSource dataSource;
+
+    @Autowired
+    protected WebSecurityConfig(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @Bean
     public PasswordEncoder encoder() {
@@ -40,18 +44,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/user").permitAll()
-                .antMatchers(HttpMethod.GET, "/query-service").permitAll()
+                .antMatchers("/user-registration").permitAll()
+                .antMatchers("/user/**").hasRole(SystemUserRole.USER.toString())
+                .antMatchers("/airline/**").hasRole(SystemUserRole.AIRLINE.toString())
                 .anyRequest().hasRole(SystemUserRole.ADMIN.toString())
                 .and()
-                .formLogin()
+                /*.formLogin()
                 .loginPage("/login")
                 .usernameParameter("login")
                 .passwordParameter("password")
                 .permitAll()
                 .and()
                 .logout()
-                .permitAll();
+                .permitAll();*/
+                .formLogin().disable()
+                .csrf().disable();
     }
 
 
@@ -61,15 +68,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .dataSource(dataSource)
                 .passwordEncoder(encoder())
                 .usersByUsernameQuery("select " +
-                        "name as username, " +
+                        "login as username, " +
                         "password as password, " +
-                        "is_active as enabled " +
+                        //"is_active as enabled " +
+                        "1 as enabled " +
                         "from system_user " +
-                        "where name=?")
+                        "where login=?")
                 .authoritiesByUsernameQuery("select " +
-                        "name as username, " +
+                        "login as username, " +
                         "role as authority " +
                         "from system_user " +
-                        "where name=?");
+                        "where login=?");
     }
 }

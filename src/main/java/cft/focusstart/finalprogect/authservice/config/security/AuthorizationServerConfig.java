@@ -18,12 +18,20 @@ import javax.sql.DataSource;
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-    @Autowired
+
     private DataSource dataSource;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
-    @Qualifier("authenticationManagerBean")
-    private AuthenticationManager authenticationManager;
+    protected AuthorizationServerConfig(DataSource dataSource, @Qualifier("authenticationManagerBean") AuthenticationManager authenticationManager) {
+        this.dataSource = dataSource;
+        this.authenticationManager = authenticationManager;
+    }
+
+    @Bean(name = "tokenStoreBean")
+    public TokenStore tokenStore() {
+        return new JdbcTokenStore(dataSource);
+    }
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
@@ -40,10 +48,5 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.tokenStore(tokenStore()).authenticationManager(authenticationManager);
-    }
-
-    @Bean(name = "tokenStoreBean")
-    public TokenStore tokenStore() {
-        return new JdbcTokenStore(dataSource);
     }
 }

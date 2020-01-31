@@ -3,13 +3,14 @@ package cft.focusstart.finalprogect.authservice.service;
 import cft.focusstart.finalprogect.authservice.model.SystemUser;
 import cft.focusstart.finalprogect.authservice.model.SystemUserRole;
 
+import java.util.List;
+
 public interface SystemUserService {
-    SystemUser saveSystemUser(String name, String password, SystemUserRole systemUserRole);
-    SystemUser updateSystemUserById(Long id, String name, String password);
+    SystemUser saveSystemUser(String name, String login, String password, SystemUserRole systemUserRole);
 
-    SystemUser getUserById(Long id);
-    SystemUser getAllSystemUsers();
-    SystemUser getAllSystemUsersByRole(SystemUserRole systemUserRole);
+    SystemUser updateSystemUserByLogin(String login, String name, String password);
 
-    void deleteUserById(Long id);
+    List<SystemUser> getAllSystemUsers();
+
+    void deleteUserByLogin(String login);
 }
